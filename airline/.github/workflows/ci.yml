@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
-  build:
+  build-and-push:
 
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -22,8 +20,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Build with Maven (tests only)
-        run: mvn clean verify -DskipTests=false
+      - name: Build and run tests
+        run: mvn clean verify
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
