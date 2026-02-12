@@ -1,0 +1,115 @@
+ Architecture Overview
+
+This Airline Seat Reservation System is implemented as a Modular Monolith using Spring Boot, with clear domain separation and internal event-driven communication.
+
+ High-Level Components
+Flutter Application
+        |
+        | REST APIs
+        v
+Spring Boot Application (Modular Monolith)
+  ├── Flight Module
+  ├── Inventory Module
+  ├── Booking Module
+  └── Payment Module
+        |
+Internal Spring Events (@Async)
+        |
+Database (H2 / PostgreSQL)
+
+ Module Responsibilities
+ Flight Module
+
+Manages available flights
+
+Exposes: GET /api/flights
+
+ Inventory Module
+
+Manages seat inventory
+
+Handles seat state transitions:
+
+AVAILABLE
+
+LOCKED
+
+BOOKED
+
+Uses optimistic locking for concurrency control
+
+ Booking Module
+
+Creates booking in PENDING_PAYMENT
+
+Locks seat synchronously
+
+Publishes payment initiation event
+
+ Payment Module
+
+Simulates payment processing
+
+Uses @Async event listener
+
+Publishes PaymentSuccessEvent
+
+ Booking Flow (End-to-End)
+
+User selects flight and seat.
+
+Booking request sent via REST API.
+
+Seat is locked synchronously.
+
+Booking created with PENDING_PAYMENT.
+
+Payment processing triggered asynchronously.
+
+On success:
+
+Booking → CONFIRMED
+
+Seat → BOOKED
+
+On failure:
+
+Booking → FAILED
+
+Seat → Released
+
+ Concurrency Handling Strategy
+
+To prevent double booking:
+
+JPA @Version field for optimistic locking
+
+Transactional seat update
+
+Seat state validation before booking
+
+If two users try to book the same seat:
+
+One transaction succeeds
+
+Second fails with version mismatch
+
+This guarantees no double booking.
+
+⚖ Consistency Model
+
+Seat locking → Strong consistency
+
+Payment confirmation → Eventual consistency
+
+This mirrors real-world airline booking systems.
+
+ Testing
+
+Unit tests for services
+
+Controller tests
+
+Payment event tests
+
+79% code coverage (JaCoCo)
