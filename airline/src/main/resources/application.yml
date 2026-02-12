@@ -17,6 +17,11 @@ spring:
 
   datasource.hikari.maximum-pool-size: 5
 
+cache:
+  flights:
+    ttl-minutes: 10
+    max-size: 100
+
 server:
   address: 0.0.0.0
   port: 8080

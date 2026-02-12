@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
+import java.time.LocalDateTime;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class BookingService {
             }
 
             seat.setStatus(SeatStatus.LOCKED);
+            seat.setLockExpiryTime(LocalDateTime.now().plusMinutes(5));
             seatRepository.save(seat);
 
             Booking booking = Booking.builder()

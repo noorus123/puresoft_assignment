@@ -39,16 +39,22 @@ public class BookingPaymentListener {
     @EventListener
     public void handlePaymentFailure(PaymentFailedEvent event) {
 
-        Booking booking = bookingRepository.findById(event.bookingId())
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        Booking booking = bookingRepository
+                .findById(event.bookingId())
+                .orElseThrow();
 
         booking.setStatus(BookingStatus.FAILED);
 
-        Seat seat = seatRepository.findByFlightIdAndSeatNumber(
-                booking.getFlightId(),
-                booking.getSeatNumber()
-        ).orElseThrow(() -> new RuntimeException("Seat not found"));
+        Seat seat = seatRepository
+                .findByFlightIdAndSeatNumber(
+                        booking.getFlightId(),
+                        booking.getSeatNumber()
+                )
+                .orElseThrow();
 
         seat.setStatus(SeatStatus.AVAILABLE);
+        seat.setLockExpiryTime(null);
+
+        seatRepository.save(seat);
     }
 }

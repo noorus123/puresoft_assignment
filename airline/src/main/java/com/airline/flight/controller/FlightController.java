@@ -1,7 +1,7 @@
 package com.airline.flight.controller;
 
 import com.airline.flight.domain.Flight;
-import com.airline.flight.repository.FlightRepository;
+import com.airline.flight.service.FlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FlightController {
 
-    private final FlightRepository flightRepository;
+    private final FlightService flightService;
 
     @GetMapping
-    public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+    public List<Flight> getFlights() {
+        return flightService.getAllFlights();
     }
 }

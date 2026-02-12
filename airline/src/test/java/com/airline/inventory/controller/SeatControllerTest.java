@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,22 +28,24 @@ class SeatControllerTest {
     @MockBean
     private SeatRepository seatRepository;
 
+
     @Test
     void shouldReturnSeats() throws Exception {
 
-        List<Seat> seats = List.of(
-                Seat.builder()
-                        .id(1L)
-                        .flightId(1L)
-                        .seatNumber("A1")
-                        .status(SeatStatus.AVAILABLE)
-                        .build()
-        );
+        Seat seat = Seat.builder()
+                .id(1L)
+                .flightId(1L)
+                .seatNumber("A1")
+                .status(SeatStatus.AVAILABLE)
+                .build();
 
-        Mockito.when(seatRepository.findAll()).thenReturn(seats);
+        when(seatRepository.findByFlightId(1L))
+                .thenReturn(List.of(seat));
 
         mockMvc.perform(get("/api/seats/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].seatNumber").value("A1"));
+                .andExpect(jsonPath("$[0].seatNumber")
+                        .value("A1"));
     }
+
 }

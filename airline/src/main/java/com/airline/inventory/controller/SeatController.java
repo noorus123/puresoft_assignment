@@ -16,9 +16,6 @@ public class SeatController {
 
     @GetMapping("/{flightId}")
     public List<Seat> getSeats(@PathVariable Long flightId) {
-        return seatRepository.findAll()
-                .stream()
-                .filter(seat -> seat.getFlightId().equals(flightId))
-                .toList();
+        return seatRepository.findByFlightId(flightId);
     }
 }

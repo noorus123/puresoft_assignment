@@ -2,6 +2,8 @@ package com.airline.inventory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
+
 
 @Entity
 @Getter
@@ -24,4 +26,7 @@ public class Seat {
 
     @Version
     private Long version;
+
+    private LocalDateTime lockExpiryTime;
+
 }
