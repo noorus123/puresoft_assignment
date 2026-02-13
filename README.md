@@ -1,26 +1,5 @@
-You’re absolutely right 👍 — what I gave you was structured text, but not visually enhanced Markdown.
-
-Now I’ll give you a properly formatted GitHub-friendly Markdown version with:
-
-Clear section hierarchy
-
-Tables
-
-Code blocks
-
-Clean spacing
-
-Visual structure
-
-Professional tone
-
-Architect-level but concise
-
-No flashy AI-looking content.
-
-You can copy this directly into README.md.
-
 Airline Seat Reservation System
+
 Overview
 
 This project implements a simplified Airline Seat Reservation System designed using production-oriented architectural principles.
