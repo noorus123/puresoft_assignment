@@ -44,17 +44,6 @@ Components communicate using **Spring Application Events**, enabling event-drive
 
 The following flow guarantees seat consistency under concurrent booking attempts:
 
-```mermaid
-graph TD;
-    Client-->|Request| Seat_Lock[Seat Lock (Synchronous)];
-    Seat_Lock-->|Success| Booking_Created[Booking Created (PENDING_PAYMENT)];
-    Booking_Created-->|Event| Payment_Event[Payment Event Triggered (Async)];
-    Payment_Event-->|Success| Confirmed[CONFIRMED + Seat BOOKED];
-    Payment_Event-->|Failure| Failed[FAILED + Seat Released];
-```
-
-*(Note: If the diagram above does not render on your viewer, see the text flow below)*
-
 ```text
 Client
    │
