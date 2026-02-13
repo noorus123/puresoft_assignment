@@ -1,115 +1,204 @@
- Architecture Overview
+You’re absolutely right 👍 — what I gave you was structured text, but not visually enhanced Markdown.
 
-This Airline Seat Reservation System is implemented as a Modular Monolith using Spring Boot, with clear domain separation and internal event-driven communication.
+Now I’ll give you a properly formatted GitHub-friendly Markdown version with:
 
- High-Level Components
-Flutter Application
-        |
-        | REST APIs
-        v
-Spring Boot Application (Modular Monolith)
-  ├── Flight Module
-  ├── Inventory Module
-  ├── Booking Module
-  └── Payment Module
-        |
-Internal Spring Events (@Async)
-        |
-Database (H2 / PostgreSQL)
+Clear section hierarchy
 
- Module Responsibilities
- Flight Module
+Tables
 
-Manages available flights
+Code blocks
 
-Exposes: GET /api/flights
+Clean spacing
 
- Inventory Module
+Visual structure
 
-Manages seat inventory
+Professional tone
 
-Handles seat state transitions:
+Architect-level but concise
 
-AVAILABLE
+No flashy AI-looking content.
 
-LOCKED
+You can copy this directly into README.md.
 
-BOOKED
+Airline Seat Reservation System
+Overview
 
-Uses optimistic locking for concurrency control
+This project implements a simplified Airline Seat Reservation System designed using production-oriented architectural principles.
 
- Booking Module
+The system demonstrates:
 
-Creates booking in PENDING_PAYMENT
+Modular monolithic architecture
 
-Locks seat synchronously
+Event-driven internal communication
 
-Publishes payment initiation event
+Concurrency-safe seat booking
 
- Payment Module
+In-memory caching
 
-Simulates payment processing
+Docker-based deployment
 
-Uses @Async event listener
+CI pipeline with automated image publishing
 
-Publishes PaymentSuccessEvent
+Architecture
 
- Booking Flow (End-to-End)
+The backend follows a modular monolith design with clearly separated domain modules:
 
-User selects flight and seat.
+Module	Responsibility
+Inventory	Seat availability & locking
+Booking	Booking lifecycle orchestration
+Payment	Asynchronous payment processing
 
-Booking request sent via REST API.
+Components communicate using Spring Application Events, enabling event-driven behavior without external message brokers.
 
-Seat is locked synchronously.
+Architectural Characteristics
 
-Booking created with PENDING_PAYMENT.
+Synchronous seat locking
 
-Payment processing triggered asynchronously.
+Asynchronous payment confirmation
 
-On success:
+Optimistic locking for concurrency control
 
-Booking → CONFIRMED
+Transactional consistency
 
-Seat → BOOKED
+REST-based API design
 
-On failure:
+Container-first deployment
 
-Booking → FAILED
+Booking Flow
+Client
+   │
+   ▼
+Seat Lock (synchronous)
+   │
+   ▼
+Booking Created (PENDING_PAYMENT)
+   │
+   ▼
+Payment Event Triggered (async)
+   │
+   ├── Success → CONFIRMED + Seat BOOKED
+   └── Failure → FAILED + Seat Released
 
-Seat → Released
 
- Concurrency Handling Strategy
+This guarantees seat consistency under concurrent booking attempts.
 
-To prevent double booking:
+Concurrency Strategy
 
-JPA @Version field for optimistic locking
+Seat entity includes:
 
-Transactional seat update
+@Version
+private Long version;
 
-Seat state validation before booking
 
-If two users try to book the same seat:
+If two users attempt to book the same seat:
 
-One transaction succeeds
+First transaction commits successfully
 
-Second fails with version mismatch
+Second transaction fails due to version conflict
 
-This guarantees no double booking.
+Seat remains consistent
 
-⚖ Consistency Model
+This prevents double-booking.
 
-Seat locking → Strong consistency
+Caching Strategy
 
-Payment confirmation → Eventual consistency
+Flight search results are cached using Caffeine (in-memory cache).
 
-This mirrors real-world airline booking systems.
+Setting	Value
+TTL	10 minutes
+Max Entries	100
+Eviction	LRU
 
- Testing
+This simulates production-style read optimization without external dependencies.
 
-Unit tests for services
+Technology Stack
+Backend
 
-Controller tests
+Java 17
 
-Payment event tests
+Spring Boot 3
 
-79% code coverage (JaCoCo)
+Spring Data JPA
+
+Hibernate
+
+H2 Database
+
+Caffeine Cache
+
+JUnit 5 / Mockito
+
+DevOps
+
+Docker (multi-stage build)
+
+Docker Compose
+
+GitHub Actions
+
+DockerHub
+
+Frontend (separate module)
+
+Flutter
+
+Project Structure
+puresoft_assignment/
+│
+├── .github/workflows/      # CI pipeline
+├── airline/                # Spring Boot backend
+│   ├── src/
+│   ├── pom.xml
+│   └── Dockerfile
+│
+├── airline_app/            # Flutter client
+└── docker-compose.yml
+
+Running the Backend
+
+From the airline directory:
+
+mvn clean install
+mvn spring-boot:run
+
+
+H2 console:
+
+http://localhost:8080/h2-console
+
+Docker Deployment
+
+Build image:
+
+docker build -t nooruskhan/airline_backend:latest .
+
+
+Run container:
+
+docker run -p 8080:8080 nooruskhan/airline_backend:latest
+
+CI Pipeline
+
+The GitHub Actions workflow performs:
+
+Maven build & test
+
+Docker image build
+
+DockerHub push
+
+Published image:
+
+nooruskhan/airline_backend:latest
+
+Design Decisions
+
+Modular monolith chosen over microservices for scope clarity
+
+Internal event-driven design for loose coupling
+
+Optimistic locking for concurrency correctness
+
+In-memory cache to simulate production read scaling
+
+Containerized from inception
